@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 const topRibbonBase = [
@@ -31,12 +31,6 @@ const taglineRibbon = repeatItems(
   8,
 )
 const bottomRibbon = repeatItems(bottomRibbonBase, 8)
-
-const loadingStats = [
-  { label: 'XR-17', value: 'A9F' },
-  { label: 'NULL', value: 'K2M' },
-  { label: 'VX-04', value: 'Q8Z' },
-]
 
 function MarqueeLine({ as: Tag = 'div', items, className, direction, strongItems = [] }) {
   const renderItems = (suffix) =>
@@ -132,16 +126,6 @@ function App() {
     }
   }, [])
 
-  const computedStats = useMemo(
-    () => [
-      loadingStats[0],
-      { label: 'PCT', value: `${String(Math.min(100, Math.round(progress))).padStart(3, '0')}%` },
-      loadingStats[1],
-      loadingStats[2],
-    ],
-    [progress],
-  )
-
   return (
     <main className="poster-shell">
       {!hideLoader && (
@@ -150,13 +134,8 @@ function App() {
             <div className="loading-bar" aria-hidden="true">
               <span style={{ width: `${progress}%` }} />
             </div>
-            <p className="loading-meta" aria-label="Loading stats">
-              {computedStats.map((item, index) => (
-                <span key={item.label}>
-                  {index > 0 ? ' / ' : ''}
-                  {item.label} {item.value}
-                </span>
-              ))}
+            <p className="loading-meta" aria-label="Loading percentage">
+              {String(Math.min(100, Math.round(progress))).padStart(3, '0')}%
             </p>
           </div>
         </section>
