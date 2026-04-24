@@ -1,6 +1,8 @@
 .poster-shell {
+  position: relative;
   min-height: 100vh;
   padding: 0;
+  background: #000;
 }
 
 .poster {
@@ -14,6 +16,57 @@
   overflow: hidden;
 }
 
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.96);
+  transition:
+    opacity 0.45s ease,
+    visibility 0.45s ease;
+}
+
+.loading-screen.is-ready {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-panel {
+  width: min(100%, 18rem);
+  display: grid;
+  gap: 0.45rem;
+  padding: 0;
+  color: #f2f2f2;
+}
+
+.loading-meta {
+  margin: 0;
+  font-family: 'Galgo', sans-serif;
+  font-size: 0.72rem;
+  line-height: 0.9;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.78;
+  text-align: center;
+}
+
+.loading-bar {
+  height: 0.16rem;
+  background: rgba(242, 242, 242, 0.12);
+  overflow: hidden;
+}
+
+.loading-bar span {
+  display: block;
+  height: 100%;
+  background: #f2f2f2;
+  transition: width 0.22s linear;
+}
+
 .marquee-row {
   width: 100%;
   margin: 0;
@@ -24,7 +77,6 @@
 .marquee-track {
   display: flex;
   width: max-content;
-  min-width: 100%;
   will-change: transform;
 }
 
@@ -64,12 +116,12 @@
 
 .hero-top {
   font-size: clamp(14rem, 36vw, 32rem);
-  --duration: 22s;
+  --duration: 420s;
 }
 
 .hero-bottom {
   font-size: clamp(6.4rem, 14vw, 12rem);
-  --duration: 24s;
+  --duration: 480s;
   margin-top: -0.12em;
 }
 
@@ -89,7 +141,7 @@
   font-size: clamp(0.95rem, 1.65vw, 1.5rem);
   line-height: 0.92;
   letter-spacing: -0.03em;
-  --duration: 16s;
+  --duration: 340s;
 }
 
 .micro-line .marquee-sequence {
@@ -102,7 +154,7 @@
   font-size: clamp(1.1rem, 2vw, 2rem);
   line-height: 0.8;
   letter-spacing: -0.03em;
-  --duration: 19s;
+  --duration: 380s;
 }
 
 .tagline .marquee-sequence {
@@ -119,13 +171,13 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-33.3333%);
   }
 }
 
 @keyframes marquee-right {
   from {
-    transform: translateX(-50%);
+    transform: translateX(-33.3333%);
   }
   to {
     transform: translateX(0);

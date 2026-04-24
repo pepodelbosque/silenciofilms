@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 const topRibbonBase = [
@@ -22,14 +23,20 @@ const bottomRibbonBase = [
 
 const repeatItems = (items, count) => Array.from({ length: count }, () => items).flat()
 
-const heroTop = repeatItems(['SILENCIO'], 8)
-const heroBottom = repeatItems(['FILMS', 'VIDEO', 'GAMES'], 6)
-const topRibbon = repeatItems(topRibbonBase, 4)
+const heroTop = repeatItems(['SILENCIO'], 14)
+const heroBottom = repeatItems(['FILMS', 'VIDEO', 'GAMES'], 10)
+const topRibbon = repeatItems(topRibbonBase, 10)
 const taglineRibbon = repeatItems(
   ['PRODUCTORA LATINOAMERICANA DE EXPERIENCIAS FILMICAS'],
-  4,
+  8,
 )
-const bottomRibbon = repeatItems(bottomRibbonBase, 3)
+const bottomRibbon = repeatItems(bottomRibbonBase, 8)
+
+const loadingStats = [
+  { label: 'XR-17', value: 'A9F' },
+  { label: 'NULL', value: 'K2M' },
+  { label: 'VX-04', value: 'Q8Z' },
+]
 
 function MarqueeLine({ as: Tag = 'div', items, className, direction, strongItems = [] }) {
   const renderItems = (suffix) =>
@@ -44,19 +51,116 @@ function MarqueeLine({ as: Tag = 'div', items, className, direction, strongItems
 
   return (
     <Tag className={`marquee-row ${direction} ${className}`}>
-      <div className="marquee-track">
+      <span className="marquee-track">
         <span className="marquee-sequence">{renderItems('a')}</span>
         <span className="marquee-sequence" aria-hidden="true">
           {renderItems('b')}
         </span>
-      </div>
+        <span className="marquee-sequence" aria-hidden="true">
+          {renderItems('c')}
+        </span>
+      </span>
     </Tag>
   )
 }
 
 function App() {
+  const [progress, setProgress] = useState(8)
+  const [isReady, setIsReady] = useState(false)
+  const [hideLoader, setHideLoader] = useState(false)
+
+  useEffect(() => {
+    let progressTimer
+    let hideTimer
+    let mounted = true
+    const startedAt = Date.now()
+
+    const advanceProgress = () => {
+      progressTimer = window.setInterval(() => {
+        setProgress((current) => {
+          if (current >= 94) {
+            window.clearInterval(progressTimer)
+            return current
+          }
+
+          return Math.min(94, current + Math.max(1, (100 - current) * 0.045))
+        })
+      }, 140)
+    }
+
+    const waitForReady = async () => {
+      const fontPromise =
+        'fonts' in document ? document.fonts.ready : Promise.resolve()
+
+      if (document.readyState !== 'complete') {
+        await new Promise((resolve) => {
+          window.addEventListener('load', resolve, { once: true })
+        })
+      }
+
+      await fontPromise
+      const elapsed = Date.now() - startedAt
+      const remaining = Math.max(0, 5000 - elapsed)
+
+      if (remaining > 0) {
+        await new Promise((resolve) => {
+          window.setTimeout(resolve, remaining)
+        })
+      }
+
+      if (!mounted) {
+        return
+      }
+
+      window.clearInterval(progressTimer)
+      setProgress(100)
+      setIsReady(true)
+      hideTimer = window.setTimeout(() => {
+        if (mounted) {
+          setHideLoader(true)
+        }
+      }, 520)
+    }
+
+    advanceProgress()
+    waitForReady()
+
+    return () => {
+      mounted = false
+      window.clearInterval(progressTimer)
+      window.clearTimeout(hideTimer)
+    }
+  }, [])
+
+  const computedStats = useMemo(
+    () => [
+      loadingStats[0],
+      { label: 'PCT', value: `${String(Math.min(100, Math.round(progress))).padStart(3, '0')}%` },
+      loadingStats[1],
+      loadingStats[2],
+    ],
+    [progress],
+  )
+
   return (
     <main className="poster-shell">
+      {!hideLoader && (
+        <section className={`loading-screen${isReady ? ' is-ready' : ''}`}>
+          <div className="loading-panel">
+            <div className="loading-bar" aria-hidden="true">
+              <span style={{ width: `${progress}%` }} />
+            </div>
+            <p className="loading-meta" aria-label="Loading stats">
+              {computedStats.map((item, index) => (
+                <span key={item.label}>
+                  {index > 0 ? ' / ' : ''}
+                  {item.label} {item.value}
+                </span>
+              ))}
+            </p>
+          </div>
+        </section>
+      )}
       <section className="poster">
         <MarqueeLine as="h1" items={heroTop} className="hero-line hero-top" direction="to-right" />
         <MarqueeLine
