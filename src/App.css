@@ -1,0 +1,139 @@
+.poster-shell {
+  min-height: 100vh;
+  padding: 0;
+}
+
+.poster {
+  width: 100vw;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15vmin;
+  padding: 0.4vmin 0;
+  overflow: hidden;
+}
+
+.marquee-row {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  will-change: transform;
+}
+
+.marquee-sequence {
+  display: inline-flex;
+  align-items: baseline;
+  flex: 0 0 auto;
+  min-width: max-content;
+}
+
+.to-left .marquee-track {
+  animation: marquee-left var(--duration, 18s) linear infinite;
+}
+
+.to-right .marquee-track {
+  animation: marquee-right var(--duration, 18s) linear infinite;
+}
+
+.hero-line,
+.micro-line,
+.tagline {
+  font-family: 'Galgo', sans-serif;
+  color: #f2f2f2;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.hero-line {
+  line-height: 0.78;
+  letter-spacing: -0.045em;
+}
+
+.hero-line .marquee-sequence {
+  gap: 0.07em;
+  padding-right: 0.07em;
+}
+
+.hero-top {
+  font-size: clamp(14rem, 36vw, 32rem);
+  --duration: 22s;
+}
+
+.hero-bottom {
+  font-size: clamp(6.4rem, 14vw, 12rem);
+  --duration: 24s;
+  margin-top: -0.12em;
+}
+
+.info-block {
+  width: 100%;
+  margin-top: -0.2vmin;
+}
+
+.rule {
+  height: 1px;
+  width: 100%;
+  background: rgba(242, 242, 242, 0.55);
+}
+
+.micro-line {
+  padding: 0.12em 0 0.08em;
+  font-size: clamp(0.95rem, 1.65vw, 1.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  --duration: 16s;
+}
+
+.micro-line .marquee-sequence {
+  gap: 0.16em;
+  padding-right: 0.16em;
+}
+
+.tagline {
+  padding: 0.12em 0 0.08em;
+  font-size: clamp(1.1rem, 2vw, 2rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  --duration: 19s;
+}
+
+.tagline .marquee-sequence {
+  gap: 0.2em;
+  padding-right: 0.2em;
+}
+
+.micro-strong {
+  font-size: 1.18em;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 700px) {
+  .poster {
+    gap: 0.25vmin;
+  }
+}
