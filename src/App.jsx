@@ -132,6 +132,20 @@ function App() {
   const [progress, setProgress] = useState(8)
   const [isReady, setIsReady] = useState(false)
   const [hideLoader, setHideLoader] = useState(false)
+  const [marqueeResetKey, setMarqueeResetKey] = useState(0)
+
+  useEffect(() => {
+    const resetMarquee = () => {
+      setMarqueeResetKey(Date.now())
+    }
+
+    resetMarquee()
+    window.addEventListener('pageshow', resetMarquee)
+
+    return () => {
+      window.removeEventListener('pageshow', resetMarquee)
+    }
+  }, [])
 
   useEffect(() => {
     let progressTimer
@@ -211,8 +225,15 @@ function App() {
         </section>
       )}
       <section className="poster">
-        <MarqueeLine as="h1" items={heroTop} className="hero-line hero-top" direction="to-right" />
         <MarqueeLine
+          key={`hero-top-${marqueeResetKey}`}
+          as="h1"
+          items={heroTop}
+          className="hero-line hero-top"
+          direction="to-right"
+        />
+        <MarqueeLine
+          key={`hero-bottom-${marqueeResetKey}`}
           as="h2"
           items={heroBottom}
           className="hero-line hero-bottom"
@@ -221,6 +242,7 @@ function App() {
         <div className="info-block">
           <div className="rule" />
           <MarqueeLine
+            key={`top-ribbon-${marqueeResetKey}`}
             as="p"
             items={topRibbon}
             className="micro-line"
@@ -229,6 +251,7 @@ function App() {
           />
           <div className="rule" />
           <MarqueeLine
+            key={`tagline-${marqueeResetKey}`}
             as="p"
             items={taglineRibbon}
             className="tagline"
@@ -236,6 +259,7 @@ function App() {
           />
           <div className="rule" />
           <MarqueeLine
+            key={`bottom-ribbon-${marqueeResetKey}`}
             as="p"
             items={bottomRibbon}
             className="micro-line micro-line--footer"
