@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 const topRibbonBase = [
@@ -33,11 +33,6 @@ const taglineRibbon = repeatItems(
 const bottomRibbon = repeatItems(bottomRibbonBase, 8)
 
 function MarqueeLine({ as: Tag = 'div', items, className, direction, strongItems = [] }) {
-  const rowRef = useRef(null)
-  const sequenceRef = useRef(null)
-  const [sequenceWidth, setSequenceWidth] = useState(0)
-  const [copyCount, setCopyCount] = useState(3)
-
   const renderItems = (suffix) =>
     items.map((item, index) => (
       <span
@@ -48,81 +43,13 @@ function MarqueeLine({ as: Tag = 'div', items, className, direction, strongItems
       </span>
     ))
 
-  useEffect(() => {
-    const rowElement = rowRef.current
-    const sequenceElement = sequenceRef.current
-
-    if (!rowElement || !sequenceElement) {
-      return undefined
-    }
-
-    let frameId = 0
-
-    const updateMeasurements = () => {
-      frameId = 0
-
-      const nextRowWidth = rowElement.getBoundingClientRect().width
-      const nextSequenceWidth = sequenceElement.getBoundingClientRect().width
-
-      if (!nextRowWidth || !nextSequenceWidth) {
-        return
-      }
-
-      const nextCopyCount = Math.max(3, Math.ceil(nextRowWidth / nextSequenceWidth) + 2)
-
-      setSequenceWidth((currentWidth) =>
-        Math.abs(currentWidth - nextSequenceWidth) > 0.5 ? nextSequenceWidth : currentWidth,
-      )
-      setCopyCount((currentCount) =>
-        currentCount !== nextCopyCount ? nextCopyCount : currentCount,
-      )
-    }
-
-    const scheduleUpdate = () => {
-      if (frameId) {
-        window.cancelAnimationFrame(frameId)
-      }
-
-      frameId = window.requestAnimationFrame(updateMeasurements)
-    }
-
-    scheduleUpdate()
-
-    const resizeObserver =
-      'ResizeObserver' in window ? new window.ResizeObserver(scheduleUpdate) : null
-
-    resizeObserver?.observe(rowElement)
-    resizeObserver?.observe(sequenceElement)
-    window.addEventListener('resize', scheduleUpdate)
-
-    return () => {
-      if (frameId) {
-        window.cancelAnimationFrame(frameId)
-      }
-
-      resizeObserver?.disconnect()
-      window.removeEventListener('resize', scheduleUpdate)
-    }
-  }, [items])
-
-  const sequences = useMemo(() => Array.from({ length: copyCount }, (_, index) => index), [copyCount])
-
   return (
-    <Tag ref={rowRef} className={`marquee-row ${direction} ${className}`}>
-      <span
-        className="marquee-track"
-        style={sequenceWidth ? { '--shift': `${sequenceWidth}px` } : undefined}
-      >
-        {sequences.map((sequenceIndex) => (
-          <span
-            key={`sequence-${sequenceIndex}`}
-            ref={sequenceIndex === 0 ? sequenceRef : undefined}
-            className="marquee-sequence"
-            aria-hidden={sequenceIndex > 0 ? 'true' : undefined}
-          >
-            {renderItems(sequenceIndex)}
-          </span>
-        ))}
+    <Tag className={`marquee-row ${direction} ${className}`}>
+      <span className="marquee-track">
+        <span className="marquee-sequence">{renderItems('a')}</span>
+        <span className="marquee-sequence" aria-hidden="true">
+          {renderItems('b')}
+        </span>
       </span>
     </Tag>
   )
@@ -133,6 +60,7 @@ function App() {
   const [isReady, setIsReady] = useState(false)
   const [hideLoader, setHideLoader] = useState(false)
   const [marqueeResetKey, setMarqueeResetKey] = useState(0)
+  const [isInverted, setIsInverted] = useState(false)
 
   useEffect(() => {
     const resetMarquee = () => {
@@ -146,6 +74,17 @@ function App() {
       window.removeEventListener('pageshow', resetMarquee)
     }
   }, [])
+
+  const toggleInverted = () => {
+    setIsInverted((current) => !current)
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      toggleInverted()
+    }
+  }
 
   useEffect(() => {
     let progressTimer
@@ -211,7 +150,15 @@ function App() {
   }, [])
 
   return (
-    <main className="poster-shell">
+    <main
+      className={`poster-shell${isInverted ? ' is-inverted' : ''}`}
+      onPointerDown={toggleInverted}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-pressed={isInverted}
+      aria-label="Toggle inverted colors"
+    >
       {!hideLoader && (
         <section className={`loading-screen${isReady ? ' is-ready' : ''}`}>
           <div className="loading-panel">
