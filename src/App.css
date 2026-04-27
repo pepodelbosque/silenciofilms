@@ -77,8 +77,8 @@
 .marquee-track {
   display: flex;
   width: max-content;
-  min-width: 300%;
   will-change: transform;
+  --shift: 0px;
 }
 
 .marquee-sequence {
@@ -86,7 +86,6 @@
   align-items: baseline;
   flex: 0 0 auto;
   width: max-content;
-  min-width: 100%;
   box-sizing: border-box;
 }
 
@@ -174,13 +173,13 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(-33.3333%);
+    transform: translateX(calc(var(--shift) * -1));
   }
 }
 
 @keyframes marquee-right {
   from {
-    transform: translateX(-33.3333%);
+    transform: translateX(calc(var(--shift) * -1));
   }
   to {
     transform: translateX(0);
