@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 const topRibbonBase = [
@@ -32,28 +32,38 @@ const taglineRibbon = repeatItems(
 )
 const bottomRibbon = repeatItems(bottomRibbonBase, 8)
 
-function MarqueeLine({ as: Tag = 'div', items, className, direction, strongItems = [] }) {
-  const renderItems = (suffix) =>
-    items.map((item, index) => (
-      <span
-        key={`${item}-${suffix}-${index}`}
-        className={strongItems.includes(item) ? 'micro-strong' : undefined}
-      >
-        {item}
-      </span>
-    ))
+const MarqueeLine = memo(function MarqueeLine({
+  as: Tag = 'div',
+  items,
+  className,
+  direction,
+  strongItems = [],
+}) {
+  const renderedSequences = useMemo(() => {
+    const renderItems = (suffix) =>
+      items.map((item, index) => (
+        <span
+          key={`${item}-${suffix}-${index}`}
+          className={strongItems.includes(item) ? 'micro-strong' : undefined}
+        >
+          {item}
+        </span>
+      ))
+
+    return [renderItems('a'), renderItems('b')]
+  }, [items, strongItems])
 
   return (
     <Tag className={`marquee-row ${direction} ${className}`}>
       <span className="marquee-track">
-        <span className="marquee-sequence">{renderItems('a')}</span>
+        <span className="marquee-sequence">{renderedSequences[0]}</span>
         <span className="marquee-sequence" aria-hidden="true">
-          {renderItems('b')}
+          {renderedSequences[1]}
         </span>
       </span>
     </Tag>
   )
-}
+})
 
 function App() {
   const [progress, setProgress] = useState(8)
@@ -61,6 +71,9 @@ function App() {
   const [hideLoader, setHideLoader] = useState(false)
   const [marqueeResetKey, setMarqueeResetKey] = useState(0)
   const [isInverted, setIsInverted] = useState(false)
+  const [isPageVisible, setIsPageVisible] = useState(
+    () => !document.hidden,
+  )
 
   useEffect(() => {
     const resetMarquee = () => {
@@ -72,6 +85,18 @@ function App() {
 
     return () => {
       window.removeEventListener('pageshow', resetMarquee)
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden)
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 
@@ -151,7 +176,7 @@ function App() {
 
   return (
     <main
-      className={`poster-shell${isInverted ? ' is-inverted' : ''}`}
+      className={`poster-shell${isInverted ? ' is-inverted' : ''}${isPageVisible ? '' : ' is-paused'}`}
       onPointerDown={toggleInverted}
       onKeyDown={handleKeyDown}
       role="button"

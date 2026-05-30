@@ -88,6 +88,7 @@
   margin: 0;
   overflow: hidden;
   white-space: nowrap;
+  contain: paint;
 }
 
 .marquee-track {
@@ -95,6 +96,8 @@
   width: max-content;
   min-width: max-content;
   will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .marquee-sequence {
@@ -111,6 +114,10 @@
 
 .to-right .marquee-track {
   animation: marquee-right var(--duration, 18s) linear infinite;
+}
+
+.poster-shell.is-paused .marquee-track {
+  animation-play-state: paused;
 }
 
 .hero-line,
