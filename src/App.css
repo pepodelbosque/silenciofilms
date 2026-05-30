@@ -3,6 +3,7 @@
   --page-fg: #f2f2f2;
   --page-muted: rgba(242, 242, 242, 0.12);
   --page-rule: rgba(242, 242, 242, 0.55);
+  --space-image-filter: brightness(0) invert(1);
   position: relative;
   min-height: 100vh;
   padding: 0;
@@ -18,17 +19,64 @@
   --page-fg: #000;
   --page-muted: rgba(0, 0, 0, 0.14);
   --page-rule: rgba(0, 0, 0, 0.58);
+  --space-image-filter: none;
 }
 
 .poster {
   width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100svh;
+  display: grid;
+  grid-template-rows:
+    minmax(clamp(4.5rem, 18vh, 12rem), 1fr)
+    auto
+    minmax(clamp(4.5rem, 18vh, 12rem), 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.poster-space {
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  flex: 0 0 auto;
+  justify-self: stretch;
+  overflow: hidden;
+}
+
+.poster-space--top {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.4rem, 1.5vh, 1.1rem) clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.poster-space--top::before {
+  content: '';
+  display: block;
+  width: min(100%, 64rem);
+  aspect-ratio: 1022 / 560;
+  max-height: clamp(4.2rem, 17vh, 11.5rem);
+  background-image: url('/images/LIMPIA1_web2.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: var(--space-image-filter);
+  transform-origin: center;
+  animation: poster-space-breathe 8.5s ease-in-out infinite;
+}
+
+.poster-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 0.15vmin;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
   padding: 0.4vmin 0;
-  overflow: hidden;
 }
 
 .loading-screen {
@@ -116,10 +164,6 @@
   animation: marquee-right var(--duration, 18s) linear infinite;
 }
 
-.poster-shell.is-paused .marquee-track {
-  animation-play-state: paused;
-}
-
 .hero-line,
 .micro-line,
 .tagline {
@@ -187,6 +231,16 @@
   padding-right: 0.2em;
 }
 
+@keyframes poster-space-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
 .micro-strong {
   font-size: 1.18em;
 }
@@ -210,7 +264,14 @@
 }
 
 @media (max-width: 700px) {
-  .poster {
+  .poster-content {
     gap: 0.25vmin;
+  }
+
+  .poster {
+    grid-template-rows:
+      minmax(clamp(3.5rem, 14vh, 8rem), 1fr)
+      auto
+      minmax(clamp(3.5rem, 14vh, 8rem), 1fr);
   }
 }

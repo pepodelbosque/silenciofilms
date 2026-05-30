@@ -3,6 +3,7 @@
   src: url('/Galgo.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 :root {
@@ -30,21 +31,26 @@ html {
   scroll-behavior: smooth;
   background: #000000;
   -webkit-tap-highlight-color: transparent;
+  height: 100%;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #000000;
   color: #ffffff;
   overscroll-behavior: none;
+  width: 100%;
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #000000;
   color: #ffffff;
+  width: 100%;
 }
 
 body,

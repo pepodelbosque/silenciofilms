@@ -31,6 +31,16 @@ const taglineRibbon = repeatItems(
   8,
 )
 const bottomRibbon = repeatItems(bottomRibbonBase, 8)
+const MOBILE_READY_TIMEOUT = 1600
+const MIN_LOADER_MS = 1800
+
+const waitWithTimeout = (promise, timeoutMs) =>
+  Promise.race([
+    promise,
+    new Promise((resolve) => {
+      window.setTimeout(resolve, timeoutMs)
+    }),
+  ])
 
 const MarqueeLine = memo(function MarqueeLine({
   as: Tag = 'div',
@@ -71,9 +81,6 @@ function App() {
   const [hideLoader, setHideLoader] = useState(false)
   const [marqueeResetKey, setMarqueeResetKey] = useState(0)
   const [isInverted, setIsInverted] = useState(false)
-  const [isPageVisible, setIsPageVisible] = useState(
-    () => !document.hidden,
-  )
 
   useEffect(() => {
     const resetMarquee = () => {
@@ -85,18 +92,6 @@ function App() {
 
     return () => {
       window.removeEventListener('pageshow', resetMarquee)
-    }
-  }, [])
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsPageVisible(!document.hidden)
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 
@@ -132,17 +127,20 @@ function App() {
 
     const waitForReady = async () => {
       const fontPromise =
-        'fonts' in document ? document.fonts.ready : Promise.resolve()
+        'fonts' in document ? waitWithTimeout(document.fonts.ready, MOBILE_READY_TIMEOUT) : Promise.resolve()
 
       if (document.readyState !== 'complete') {
-        await new Promise((resolve) => {
-          window.addEventListener('load', resolve, { once: true })
-        })
+        await waitWithTimeout(
+          new Promise((resolve) => {
+            window.addEventListener('load', resolve, { once: true })
+          }),
+          MOBILE_READY_TIMEOUT,
+        )
       }
 
       await fontPromise
       const elapsed = Date.now() - startedAt
-      const remaining = Math.max(0, 5000 - elapsed)
+      const remaining = Math.max(0, MIN_LOADER_MS - elapsed)
 
       if (remaining > 0) {
         await new Promise((resolve) => {
@@ -176,7 +174,7 @@ function App() {
 
   return (
     <main
-      className={`poster-shell${isInverted ? ' is-inverted' : ''}${isPageVisible ? '' : ' is-paused'}`}
+      className={`poster-shell${isInverted ? ' is-inverted' : ''}`}
       onPointerDown={toggleInverted}
       onKeyDown={handleKeyDown}
       role="button"
@@ -197,47 +195,51 @@ function App() {
         </section>
       )}
       <section className="poster">
-        <MarqueeLine
-          key={`hero-top-${marqueeResetKey}`}
-          as="h1"
-          items={heroTop}
-          className="hero-line hero-top"
-          direction="to-right"
-        />
-        <MarqueeLine
-          key={`hero-bottom-${marqueeResetKey}`}
-          as="h2"
-          items={heroBottom}
-          className="hero-line hero-bottom"
-          direction="to-left"
-        />
-        <div className="info-block">
-          <div className="rule" />
+        <div className="poster-space poster-space--top" data-space-name="ESPACIO1" aria-hidden="true" />
+        <div className="poster-content">
           <MarqueeLine
-            key={`top-ribbon-${marqueeResetKey}`}
-            as="p"
-            items={topRibbon}
-            className="micro-line"
+            key={`hero-top-${marqueeResetKey}`}
+            as="h1"
+            items={heroTop}
+            className="hero-line hero-top"
             direction="to-right"
-            strongItems={['SILENCIO', 'FILMS']}
           />
-          <div className="rule" />
           <MarqueeLine
-            key={`tagline-${marqueeResetKey}`}
-            as="p"
-            items={taglineRibbon}
-            className="tagline"
+            key={`hero-bottom-${marqueeResetKey}`}
+            as="h2"
+            items={heroBottom}
+            className="hero-line hero-bottom"
             direction="to-left"
           />
-          <div className="rule" />
-          <MarqueeLine
-            key={`bottom-ribbon-${marqueeResetKey}`}
-            as="p"
-            items={bottomRibbon}
-            className="micro-line micro-line--footer"
-            direction="to-right"
-          />
+          <div className="info-block">
+            <div className="rule" />
+            <MarqueeLine
+              key={`top-ribbon-${marqueeResetKey}`}
+              as="p"
+              items={topRibbon}
+              className="micro-line"
+              direction="to-right"
+              strongItems={['SILENCIO', 'FILMS']}
+            />
+            <div className="rule" />
+            <MarqueeLine
+              key={`tagline-${marqueeResetKey}`}
+              as="p"
+              items={taglineRibbon}
+              className="tagline"
+              direction="to-left"
+            />
+            <div className="rule" />
+            <MarqueeLine
+              key={`bottom-ribbon-${marqueeResetKey}`}
+              as="p"
+              items={bottomRibbon}
+              className="micro-line micro-line--footer"
+              direction="to-right"
+            />
+          </div>
         </div>
+        <div className="poster-space poster-space--bottom" data-space-name="ESPACIO2" aria-hidden="true" />
       </section>
     </main>
   )
