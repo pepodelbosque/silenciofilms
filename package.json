@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "autocommit": "node scripts/autocommit.cjs"
+    "autocommit": "node scripts/autocommit.cjs",
+    "commit-changes": "node scripts/autocommit.cjs",
+    "update": "node scripts/update.cjs"
   },
   "dependencies": {
     "react": "^19.2.5",
