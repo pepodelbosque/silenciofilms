@@ -6,6 +6,6 @@ const run = (command, args) => {
     process.exit(result.status ?? 1)
   }
 }
-
+ 
 run('git', ['fetch', 'origin', '--prune'])
 run('git', ['pull', '--ff-only'])
