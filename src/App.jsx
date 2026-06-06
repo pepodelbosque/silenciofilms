@@ -198,7 +198,15 @@ function App() {
         </section>
       )}
       <section className="poster">
-        <div className="poster-space poster-space--top" data-space-name="ESPACIO1" aria-hidden="true" />
+        <div className="poster-space poster-space--top" data-space-name="ESPACIO1" aria-hidden="true">
+          <img
+            className="poster-space-image"
+            src="/images/LIMPIA1_web2.png"
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+        </div>
         <div className="poster-content">
           <MarqueeLine
             key={`hero-top-${marqueeResetKey}`}
