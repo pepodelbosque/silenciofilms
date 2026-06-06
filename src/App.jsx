@@ -286,7 +286,17 @@ function App() {
             />
           </div>
         </div>
-        <div className="poster-space poster-space--bottom" data-space-name="ESPACIO2" aria-hidden="true" />
+        <div className="poster-space poster-space--bottom" data-space-name="ESPACIO2">
+          <img
+            className="poster-space-logo"
+            src="/images/logo-rndm.png"
+            alt="RNDM logo"
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          />
+          <p className="poster-space-caption">the videogame</p>
+        </div>
       </section>
     </main>
   )
