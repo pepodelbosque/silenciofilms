@@ -23,14 +23,14 @@ const bottomRibbonBase = [
 
 const repeatItems = (items, count) => Array.from({ length: count }, () => items).flat()
 
-const heroTop = repeatItems(['SILENCIO'], 14)
-const heroBottom = repeatItems(['FILMS', 'VIDEO', 'GAMES'], 10)
-const topRibbon = repeatItems(topRibbonBase, 10)
+const heroTop = repeatItems(['SILENCIO'], 22)
+const heroBottom = repeatItems(['FILMS', 'VIDEO', 'GAMES'], 18)
+const topRibbon = repeatItems(topRibbonBase, 18)
 const taglineRibbon = repeatItems(
   ['PRODUCTORA LATINOAMERICANA DE EXPERIENCIAS FILMICAS'],
-  8,
+  14,
 )
-const bottomRibbon = repeatItems(bottomRibbonBase, 8)
+const bottomRibbon = repeatItems(bottomRibbonBase, 14)
 const MOBILE_READY_TIMEOUT = 1600
 const MIN_LOADER_MS = 1800
 
@@ -60,7 +60,7 @@ const MarqueeLine = memo(function MarqueeLine({
         </span>
       ))
 
-    return [renderItems('a'), renderItems('b')]
+    return [renderItems('a'), renderItems('b'), renderItems('c')]
   }, [items, strongItems])
 
   return (
@@ -69,6 +69,9 @@ const MarqueeLine = memo(function MarqueeLine({
         <span className="marquee-sequence">{renderedSequences[0]}</span>
         <span className="marquee-sequence" aria-hidden="true">
           {renderedSequences[1]}
+        </span>
+        <span className="marquee-sequence" aria-hidden="true">
+          {renderedSequences[2]}
         </span>
       </span>
     </Tag>
