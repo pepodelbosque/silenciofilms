@@ -16,9 +16,9 @@ const runCapture = (command, args) => {
 }
 
 const argv = process.argv.slice(2)
-const noPushIndex = argv.indexOf('--no-push')
-const shouldPush = noPushIndex === -1
-const messageArgs = argv.filter((arg) => arg !== '--no-push')
+const skipPushIndex = argv.indexOf('--skip-push')
+const shouldPush = skipPushIndex === -1
+const messageArgs = argv.filter((arg) => arg !== '--skip-push')
 
 const status = runCapture('git', ['status', '--porcelain'])
 if (!status) {
