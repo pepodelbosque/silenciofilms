@@ -84,6 +84,7 @@ function App() {
   const [hideLoader, setHideLoader] = useState(false)
   const [marqueeResetKey, setMarqueeResetKey] = useState(0)
   const [isInverted, setIsInverted] = useState(false)
+  const [isSpacePopupOpen, setIsSpacePopupOpen] = useState(false)
 
   useEffect(() => {
     const resetMarquee = () => {
@@ -107,6 +108,33 @@ function App() {
       event.preventDefault()
       toggleInverted()
     }
+  }
+
+  useEffect(() => {
+    if (!isSpacePopupOpen) {
+      return undefined
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsSpacePopupOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isSpacePopupOpen])
+
+  const openSpacePopup = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsSpacePopupOpen(true)
+  }
+
+  const closeSpacePopup = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setIsSpacePopupOpen(false)
   }
 
   useEffect(() => {
@@ -197,15 +225,23 @@ function App() {
           </div>
         </section>
       )}
+      {isSpacePopupOpen && (
+        <div className="space-popup-overlay" role="dialog" aria-modal="true" onPointerDown={closeSpacePopup}>
+          <div className="space-popup-frame" aria-hidden="true" />
+        </div>
+      )}
       <section className="poster">
-        <div className="poster-space poster-space--top" data-space-name="ESPACIO1" aria-hidden="true">
-          <img
-            className="poster-space-image"
-            src="/images/LIMPIA1_web2.png"
-            alt=""
-            loading="eager"
-            decoding="async"
-          />
+        <div className="poster-space poster-space--top" data-space-name="ESPACIO1">
+          <button className="poster-space-trigger" type="button" onPointerDown={openSpacePopup}>
+            <img
+              className="poster-space-image"
+              src="/images/LIMPIA1_web2.png"
+              alt="Open popup"
+              loading="eager"
+              decoding="async"
+              draggable="false"
+            />
+          </button>
         </div>
         <div className="poster-content">
           <MarqueeLine
