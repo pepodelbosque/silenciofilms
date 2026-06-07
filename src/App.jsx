@@ -137,7 +137,7 @@ function App() {
     setActivePopup('random')
   }
 
-  const closeSpacePopup = (event) => {
+  const closeActivePopup = (event) => {
     event.preventDefault()
     event.stopPropagation()
     setActivePopup(null)
@@ -236,37 +236,45 @@ function App() {
         </section>
       )}
       {activePopup && (
-        <div className="space-popup-overlay" role="dialog" aria-modal="true" onPointerDown={closeSpacePopup}>
+        <div className="space-popup-overlay" role="dialog" aria-modal="true" onPointerDown={closeActivePopup}>
           <div
             className={`space-popup-frame${activePopup === 'random' ? ' space-popup-frame--random' : ' space-popup-frame--dulce'}`}
-            aria-hidden="true"
             onPointerDown={stopPopupInteraction}
           />
         </div>
       )}
       <section className="poster">
         <div className="poster-space poster-space--top" data-space-name="ESPACIO1">
-          <button className="poster-space-trigger" type="button" onPointerDown={openDulcePopup}>
-            <img
-              className="poster-space-image"
-              src="/images/LIMPIA1_web2.png"
-              alt="Open popup"
-              loading="eager"
-              decoding="async"
-              draggable="false"
-            />
-          </button>
-          <button className="poster-space-mark" type="button" onPointerDown={openRandomPopup}>
-            <img
-              className="poster-space-logo"
-              src="/images/logo-rndm.png"
-              alt="RNDM logo"
-              loading="lazy"
-              decoding="async"
-              draggable="false"
-            />
-            <p className="poster-space-caption">THE VIDEOGAME - DIRECTORS CUT</p>
-          </button>
+          <div className="poster-space-part" data-space-name="ESPACIO1_a">
+            <button className="poster-space-trigger" type="button" onPointerDown={openDulcePopup}>
+              <img
+                className="poster-space-image"
+                src="/images/LIMPIA1_web2.png"
+                alt="Open popup"
+                loading="eager"
+                decoding="async"
+                draggable="false"
+              />
+            </button>
+          </div>
+          <div className="poster-space-part" data-space-name="ESPACIO1_b">
+            <button
+              className="poster-space-mark"
+              type="button"
+              onPointerDown={openRandomPopup}
+              aria-label="Open random project popup"
+            >
+              <img
+                className="poster-space-logo"
+                src="/images/logo-rndm.png"
+                alt="RNDM logo"
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+              <p className="poster-space-caption">THE VIDEOGAME - DIRECTORS CUT</p>
+            </button>
+          </div>
         </div>
         <div className="poster-content">
           <MarqueeLine
