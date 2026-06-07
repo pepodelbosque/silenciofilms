@@ -84,7 +84,7 @@ function App() {
   const [hideLoader, setHideLoader] = useState(false)
   const [marqueeResetKey, setMarqueeResetKey] = useState(0)
   const [isInverted, setIsInverted] = useState(false)
-  const [isSpacePopupOpen, setIsSpacePopupOpen] = useState(false)
+  const [activePopup, setActivePopup] = useState(null)
 
   useEffect(() => {
     const resetMarquee = () => {
@@ -111,30 +111,40 @@ function App() {
   }
 
   useEffect(() => {
-    if (!isSpacePopupOpen) {
+    if (!activePopup) {
       return undefined
     }
 
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
-        setIsSpacePopupOpen(false)
+        setActivePopup(null)
       }
     }
 
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
-  }, [isSpacePopupOpen])
+  }, [activePopup])
 
-  const openSpacePopup = (event) => {
+  const openDulcePopup = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    setIsSpacePopupOpen(true)
+    setActivePopup('dulce')
+  }
+
+  const openRandomPopup = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setActivePopup('random')
   }
 
   const closeSpacePopup = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    setIsSpacePopupOpen(false)
+    setActivePopup(null)
+  }
+
+  const stopPopupInteraction = (event) => {
+    event.stopPropagation()
   }
 
   useEffect(() => {
@@ -225,14 +235,18 @@ function App() {
           </div>
         </section>
       )}
-      {isSpacePopupOpen && (
+      {activePopup && (
         <div className="space-popup-overlay" role="dialog" aria-modal="true" onPointerDown={closeSpacePopup}>
-          <div className="space-popup-frame" aria-hidden="true" />
+          <div
+            className={`space-popup-frame${activePopup === 'random' ? ' space-popup-frame--random' : ' space-popup-frame--dulce'}`}
+            aria-hidden="true"
+            onPointerDown={stopPopupInteraction}
+          />
         </div>
       )}
       <section className="poster">
         <div className="poster-space poster-space--top" data-space-name="ESPACIO1">
-          <button className="poster-space-trigger" type="button" onPointerDown={openSpacePopup}>
+          <button className="poster-space-trigger" type="button" onPointerDown={openDulcePopup}>
             <img
               className="poster-space-image"
               src="/images/LIMPIA1_web2.png"
@@ -241,6 +255,17 @@ function App() {
               decoding="async"
               draggable="false"
             />
+          </button>
+          <button className="poster-space-mark" type="button" onPointerDown={openRandomPopup}>
+            <img
+              className="poster-space-logo"
+              src="/images/logo-rndm.png"
+              alt="RNDM logo"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
+            <p className="poster-space-caption">THE VIDEOGAME - DIRECTORS CUT</p>
           </button>
         </div>
         <div className="poster-content">
@@ -286,17 +311,7 @@ function App() {
             />
           </div>
         </div>
-        <div className="poster-space poster-space--bottom" data-space-name="ESPACIO2">
-          <img
-            className="poster-space-logo"
-            src="/images/logo-rndm.png"
-            alt="RNDM logo"
-            loading="lazy"
-            decoding="async"
-            draggable="false"
-          />
-          <p className="poster-space-caption">the videogame</p>
-        </div>
+        <div className="poster-space poster-space--bottom" data-space-name="ESPACIO2" aria-hidden="true" />
       </section>
     </main>
   )
